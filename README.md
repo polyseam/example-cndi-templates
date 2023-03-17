@@ -31,16 +31,14 @@ The `template` object is the standard `cndi-config.jsonc` object with one except
 
 Input:
 
-```jsonc
+```json
 {
     "cndi-config": {
-        "prompts": [
-            {
-                "name": "argocdDomainName",
-                "message": "What domain name should argocd be deployed on?",
-                "default": "argocd.example.com"
-            }
-        ],
+        "prompts": [{
+            "name": "argocdDomainName",
+            "message": "What domain name should argocd be deployed on?",
+            "default": "argocd.example.com"
+        }],
         "template": {
             "applications": {...},
             "infrastructure": {...},
@@ -50,20 +48,16 @@ Input:
                     "kind": "Ingress",
                     "metadata": {...},
                     "spec": {
-                        "tls": [
-                            {
-                                "hosts": ["$.cndi.prompts.argocdDomainName"],
-                                "secretName": "lets-encrypt-private-key"
+                        "tls": [{
+                            "hosts": ["$.cndi.prompts.argocdDomainName"],
+                            "secretName": "lets-encrypt-private-key"
+                        }],
+                        "rules": [{
+                            "host": "$.cndi.prompts.argocdDomainName",
+                            "http": {
+                                "paths": [...]
                             }
-                        ],
-                        "rules": [
-                            {
-                                "host": "$.cndi.prompts.argocdDomainName",
-                                "http": {
-                                    "paths": [...]
-                                }
-                            }
-                        ]
+                        }]
                     }
                 }
             }
@@ -175,7 +169,7 @@ The final block of a [cndi](https://github.com/polyseam/cndi) template is the re
 }
 ```
 
-The `extends_basic_readme` key is used to extend the `README.md` file for a given deployment target. CNDI provides the necessary readme section for each deployment target so that the `README.md` file can be extended with more content after those basic readme sections have been written to the file. 
+The `extends_basic_readme` key is used to extend the `README.md` file for a given deployment target. CNDI provides the necessary readme section for each deployment target so that the `README.md` file can be extended with more content after those basic readme sections have been written to the file.
 
 The value of `extends_basic_readme` should be the name of the deployment target you wish to extend, for example `gcp`, `azure` or `aws` as shown above.
 
@@ -194,6 +188,7 @@ Output:
 
 ```markdown
 <!-- Lots more content above -->
+
 ## aws
 
 This cluster will be deployed on [Amazon Web Services](https://aws.com).
@@ -204,7 +199,6 @@ Both entries should point to the single load balancer that was created for your 
 
 neato!
 ```
-
 
 ## Included Examples
 
