@@ -35,6 +35,10 @@ Input:
 {
     "cndi-config": {
         "prompts": [{
+            // each prompts object is created leveraging the `prompts` module from 
+            // https://cliffy.io/docs@v0.25.7/prompt#prompt-list
+            // all prompt types are supported
+            "type": "Input",
             "name": "argocdDomainName",
             "message": "What domain name should argocd be deployed on?",
             "default": "argocd.example.com"
@@ -198,6 +202,25 @@ Both entries should point to the single load balancer that was created for your 
 ## This is a simple readme section that is template specific
 
 neato!
+```
+
+## all together now!
+
+```jsonc
+{
+    "cndi-config": {
+        "template": {/*...*/},
+        "prompts": [/*...*/]
+    },
+    "env": {
+        "prompts": [/*...*/],
+        "extend_basic_env": "aws"
+    },
+    "readme": {
+        "extends_basic_readme": "aws",
+        "template": "## $$.cndi.prompts.projectName\n\nThis is a sample readme"
+    }
+}
 ```
 
 ## Included Examples
