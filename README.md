@@ -218,7 +218,7 @@ neato!
     },
     "readme": {
         "extends_basic_readme": "aws",
-        "template": "## $$.cndi.prompts.projectName\n\nThis is a sample readme"
+        "template": "##This is a sample readme\n\nneato!"
     }
 }
 ```
