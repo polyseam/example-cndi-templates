@@ -10,14 +10,14 @@ A [cndi](https://github.com/polyseam/cndi) Template is a JSON file that CNDI can
 
 The `cndi-config` block is used to provide a templating interface around the `cndi-config.jsonc` file that acts as the core of each CNDI project. The shape of the object is as follows:
 
-```json
+```jsonc
 {
   "cndi-config": {
-    "prompts": [...],
+    "prompts": [/*...*/],
     "template": {
-      "infrastructure": {...},
-      "cluster_manifests": {...},
-      "applications": {...}
+      "infrastructure": {/*...*/},
+      "cluster_manifests": {/*...*/},
+      "applications": {/*...*/}
     }
   }
 }
@@ -31,7 +31,7 @@ The `template` object is the standard `cndi-config.jsonc` object with one except
 
 Input:
 
-```json
+```jsonc
 {
     "cndi-config": {
         "prompts": [{
@@ -40,13 +40,13 @@ Input:
             "default": "argocd.example.com"
         }],
         "template": {
-            "applications": {...},
-            "infrastructure": {...},
+            "applications": {/*...*/},
+            "infrastructure": {/*...*/},
             "cluster_manifests": {
                 "argo-ingress": {
                     "apiVersion": "networking.k8s.io/v1",
                     "kind": "Ingress",
-                    "metadata": {...},
+                    "metadata": {/*...*/},
                     "spec": {
                         "tls": [{
                             "hosts": ["$.cndi.prompts.argocdDomainName"],
@@ -55,7 +55,7 @@ Input:
                         "rules": [{
                             "host": "$.cndi.prompts.argocdDomainName",
                             "http": {
-                                "paths": [...]
+                                "paths": [/*...*/]
                             }
                         }]
                     }
@@ -68,15 +68,15 @@ Input:
 
 Output:
 
-```json
+```jsonc
 {
-    "applications": {...},
-    "infrastructure": {...},
+    "applications": {/*...*/},
+    "infrastructure": {/*...*/},
     "cluster_manifests": {
         "argo-ingress": {
             "apiVersion": "networking.k8s.io/v1",
             "kind": "Ingress",
-            "metadata": {...},
+            "metadata": {/*...*/},
             "spec": {
                 "tls": [
                     {
@@ -88,7 +88,7 @@ Output:
                     {
                         "host": "myargocd.creedthoughts.comgov.uks",
                         "http": {
-                            "paths": [...]
+                            "paths": [/*...*/]
                         }
                     }
                 ]
@@ -104,10 +104,10 @@ Output:
 
 The `env` block is used to provide a templating interface around the `.env` file which is used for values which should not be written directly to version control. The shape of the object is as follows:
 
-```json
+```jsonc
 {
   "env": {
-    "prompts": [...],
+    "prompts": [/*...*/],
     "extend_basic_env": "aws"
   }
 }
@@ -121,7 +121,7 @@ The `extend_basic_env` key is used to extend the `.env` file for a given deploym
 
 Input:
 
-```json
+```jsonc
 {
   "extend_basic_env": "aws",
   "prompts": [
@@ -160,7 +160,7 @@ GIT_SYNC_PASSWORD='hunter2'
 
 The final block of a [cndi](https://github.com/polyseam/cndi) template is the readme block, which behave similarly to the other two sections. We specify a readme block in order to provide a templating interface around the `README.md` file that is generated when a user runs `cndi init`. The shape of the object is as follows:
 
-```json
+```jsonc
 {
   "readme": {
     "extends_basic_readme": "aws",
@@ -177,7 +177,7 @@ The value of `extends_basic_readme` should be the name of the deployment target 
 
 Input:
 
-```json
+```jsonc
 {
   "extends_basic_readme": "aws",
   "template": "## This is a simple readme section that is template specific\n\nneato!"
