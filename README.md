@@ -68,7 +68,7 @@ Input:
 
 Output:
 
-```jsonc
+```json
 {
     "applications": {...},
     "infrastructure": {...},
