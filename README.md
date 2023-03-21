@@ -168,7 +168,7 @@ The final block of a [cndi](https://github.com/polyseam/cndi) template is the re
 {
   "readme": {
     "extends_basic_readme": "aws",
-    "template": "## $$.cndi.prompts.projectName\n\nThis is a sample readme"
+    "template": "## This is a sample readme section"
   }
 }
 ```
