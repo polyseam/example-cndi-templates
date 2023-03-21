@@ -36,7 +36,7 @@ Input:
     "cndi-config": {
         "prompts": [{
             // each prompts object is created leveraging the `prompts` module from 
-            // https://cliffy.io/docs@v0.25.7/prompt#prompt-list
+            // https://cliffy.io/docs/prompt#prompt-list
             // all prompt types are supported
             "type": "Input",
             "name": "argocdDomainName",
