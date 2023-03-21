@@ -162,7 +162,7 @@ GIT_SYNC_PASSWORD='hunter2'
 
 ### Summary
 
-The final block of a [cndi](https://github.com/polyseam/cndi) template is the readme block, which behave similarly to the other two sections. We specify a readme block in order to provide a templating interface around the `README.md` file that is generated when a user runs `cndi init`. The shape of the object is as follows:
+The final block of a [cndi](https://github.com/polyseam/cndi) template is the `readme` block, which behave similarly to the other two sections. We specify a readme block in order to provide a templating interface around the `README.md` file that is generated when a user runs `cndi init`. The shape of the object is as follows:
 
 ```jsonc
 {
