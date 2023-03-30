@@ -59,8 +59,8 @@
               "namespace": "airflow"
             },
             "stringData": {
-              "GIT_SYNC_USERNAME": "$.cndi.secrets.GIT_SYNC_USERNAME",
-              "GIT_SYNC_PASSWORD": "$.cndi.secrets.GIT_SYNC_PASSWORD"
+              "GIT_SYNC_USERNAME": "$.cndi.secrets.seal(GIT_SYNC_USERNAME)",
+              "GIT_SYNC_PASSWORD": "$.cndi.secrets.seal(GIT_SYNC_PASSWORD)"
             }
           },
           "cert-manager-cluster-issuer": {
@@ -71,7 +71,7 @@
             },
             "spec": {
               "acme": {
-                "email": "$.cndi.prompts.letsEncryptClusterIssuerEmailAddress",
+                "email": "$.cndi.prompts.responses.letsEncryptClusterIssuerEmailAddress",
                 "server": "https://acme-v02.api.letsencrypt.org/directory",
                 "privateKeySecretRef": {
                   "name": "lets-encrypt-private-key"
@@ -104,13 +104,13 @@
             "spec": {
               "tls": [
                 {
-                  "hosts": ["$.cndi.prompts.argocdDomainName"],
+                  "hosts": ["$.cndi.prompts.responses.argocdDomainName"],
                   "secretName": "lets-encrypt-private-key"
                 }
               ],
               "rules": [
                 {
-                  "host": "$.cndi.prompts.argocdDomainName",
+                  "host": "$.cndi.prompts.responses.argocdDomainName",
                   "http": {
                     "paths": [
                       {
@@ -154,7 +154,7 @@
                   "expose_config": "True",
                   "instance_name": "Polyseam",
                   "enable_proxy_fix": "True",
-                  "base_url": "https://$.cndi.prompts.airflowDomainName"
+                  "base_url": "https://$.cndi.prompts.responses.airflowDomainName"
                 },
                 "operators": {
                   "default_owner": "Polyseam"
@@ -168,7 +168,7 @@
                   },
                   "hosts": [
                     {
-                      "name": "$.cndi.prompts.airflowDomainName",
+                      "name": "$.cndi.prompts.responses.airflowDomainName",
                       "tls": {
                         "secretName": "lets-encrypt-private-key",
                         "enabled": true
