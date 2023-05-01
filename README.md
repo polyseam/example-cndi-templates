@@ -2,7 +2,7 @@
 
 ## Wbat is a CNDI Template?
 
-A [cndi](https://github.com/polyseam/cndi) Template is a JSON file that CNDI can parse in order to provide a simplified deployment experience for some cloud-native application. The template declares 3 blocks, each relating to a particular file. Let's dive into those 3 sections of a template file now.
+A [cndi](https://cndi.run/gh?utm_content=gh_cndi_template_readme&utm_campaign=cndi_template_readme_v1&utm_source=github.com/polyseam/cndi-template-basic&utm_medium=repo&utm_id=1007) Template is a JSON file that CNDI can parse in order to provide a simplified deployment experience for some cloud-native application. The template declares 3 blocks, each relating to a particular file. Let's dive into those 3 sections of a template file now.
 
 ## cndi-config
 
@@ -36,7 +36,7 @@ Input:
     "cndi-config": {
         "prompts": [{
             // each prompts object is created leveraging the `prompts` module from 
-            // https://cliffy.io/docs@v0.25.7/prompt#prompt-list
+            // https://cliffy.io/docs/prompt#prompt-list
             // all prompt types are supported
             "type": "Input",
             "name": "argocdDomainName",
@@ -162,13 +162,13 @@ GIT_SYNC_PASSWORD='hunter2'
 
 ### Summary
 
-The final block of a [cndi](https://github.com/polyseam/cndi) template is the readme block, which behave similarly to the other two sections. We specify a readme block in order to provide a templating interface around the `README.md` file that is generated when a user runs `cndi init`. The shape of the object is as follows:
+The final block of a [cndi](https://github.com/polyseam/cndi) template is the `readme` block, which behave similarly to the other two sections. We specify a readme block in order to provide a templating interface around the `README.md` file that is generated when a user runs `cndi init`. The shape of the object is as follows:
 
 ```jsonc
 {
   "readme": {
     "extends_basic_readme": "aws",
-    "template": "## $$.cndi.prompts.projectName\n\nThis is a sample readme"
+    "template": "## This is a sample readme section"
   }
 }
 ```
@@ -218,7 +218,7 @@ neato!
     },
     "readme": {
         "extends_basic_readme": "aws",
-        "template": "## $$.cndi.prompts.projectName\n\nThis is a sample readme"
+        "template": "##This is a sample readme\n\nneato!"
     }
 }
 ```
