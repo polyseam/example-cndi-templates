@@ -1,0 +1,36 @@
+{
+  "prompts": [
+    {
+      "name": "secretAppPassword",
+      "type": "Input",
+      "message": "What password should be used for SecretApp?"
+    }
+  ],
+  "outputs": {
+    "cndi-config": {
+      "infrastructure": {
+        "cndi": {
+          "nodes": [
+            {
+              "name": "my-k8s-node",
+              "kind": "ec2",
+              "role": "leader",
+              "machine_type": "t3.large",
+              "volume_size": 128
+            }
+          ]
+        }
+      }
+    },
+    "env": {
+      "extend_basic_env": "aws",
+      "entries": [
+        {
+          "name": "SECRETAPP_PASSWORD",
+          "value": "{{ $.cndi.prompts.responses.secretAppPassword }}"
+        }
+      ]
+    },
+    "readme": "# logging into secret app\n\nvisit secretapp.cndi.dev and type in the passphrase \"{{ $.cndi.prompts.responses.secretAppPassword }}\""
+  }
+}

@@ -2,30 +2,70 @@
 
 ## Wbat is a CNDI Template?
 
-A [cndi](https://cndi.run/gh?utm_content=gh_cndi_template_readme&utm_campaign=cndi_template_readme_v1&utm_source=github.com/polyseam/cndi-template-basic&utm_medium=repo&utm_id=1007) Template is a JSON file that CNDI can parse in order to provide a simplified deployment experience for some cloud-native application. The template declares 3 blocks, each relating to a particular file. Let's dive into those 3 sections of a template file now.
+A [cndi](https://cndi.run/gh?utm_content=gh_cndi_template_readme&utm_campaign=cndi_template_readme_v1&utm_source=github.com/polyseam/cndi-template-basic&utm_medium=repo&utm_id=1007) Template is a JSON file that CNDI can parse in order to provide a simplified deployment experience for some cloud-native application. The template declares 3 `"output"` blocks, each relating to a particular file, and one `"prompts"` array which allows each output to be customized by end users. Let's start by looking at the `"prompts"` array.
+
+## prompts
+
+The `prompts` array is a list of questions that CNDI will ask the user when they run `cndi init --interactive`, if the user is not in interactive mode the value will fallback to the default provided.
+
+```jsonc
+{
+  "prompts": [
+    {
+      // each prompts object is created leveraging the `prompts` module from
+      // https://cliffy.io/docs/prompt#prompt-list
+      // the following input types are all supported:
+      // "Input" | "Secret" | "Confirm" | "Toggle" | "Select" | "List" | "Checkbox" | "Number"
+      "type": "Input",
+      "name": "argocdDomainName",
+      "message": "What domain name should argocd be deployed on?",
+      "default": "argocd.example.com"
+    },
+    {
+      "type": "Secret",
+      "name": "myAirflowPassword",
+      "message": "Please enter a default password for Airflow:",
+      "default": "admin"
+    }
+  ]
+}
+```
+
+When using the `--interactive` flag in CNDI each of these prompts will provide an interactive prompt to populate the value. 
+
+If the user does not provide a value _or_ if the user is not using interactive mode, the default will be used. 
+
+These values are then accessible inside of a template `"output"` using the following syntax: `{{ $.cndi.prompts.responses.<prompt_name> }}`. 
+
+For example, if we wanted to use the value of `argocdDomainName` in a template we would use the following syntax: `{{ $.cndi.prompts.responses.argocdDomainName }}`.
+
+## outputs
 
 ## cndi-config
 
 ### Summary
 
-The `cndi-config` block is used to provide a templating interface around the `cndi-config.jsonc` file that acts as the core of each CNDI project. The shape of the object is as follows:
+The `outputs["cndi-config"]` block is used to provide a templating interface around the `cndi-config.jsonc` file that acts as the core of each CNDI project. The shape of the object is as follows:
 
 ```jsonc
 {
-  "cndi-config": {
-    "prompts": [/*...*/],
-    "template": {
-      "infrastructure": {/*...*/},
-      "cluster_manifests": {/*...*/},
-      "applications": {/*...*/}
+  "outputs": {
+    "cndi-config": {
+      "infrastructure": {
+        /*...*/
+      },
+      "cluster_manifests": {
+        /*...*/
+      },
+      "applications": {
+        /*...*/
+      }
     }
   }
 }
 ```
 
-The `prompts` array is a list of questions that CNDI will ask the user when they run `cndi init --interactive`, if the user is not in interactive mode the value will fallback to the default provided.
-
-The `template` object is the standard `cndi-config.jsonc` object with one exception: anywhere within the object a user can choose to inject a value retrieved from the prompts.
+Let's look at an example of leveraging a `"prompt"` entry to populate a value into the `cndi-config.jsonc` file.
 
 ### Example
 
@@ -33,40 +73,43 @@ Input:
 
 ```jsonc
 {
-    "cndi-config": {
-        "prompts": [{
-            // each prompts object is created leveraging the `prompts` module from 
-            // https://cliffy.io/docs/prompt#prompt-list
-            // all prompt types are supported
-            "type": "Input",
-            "name": "argocdDomainName",
-            "message": "What domain name should argocd be deployed on?",
-            "default": "argocd.example.com"
-        }],
-        "template": {
-            "applications": {/*...*/},
-            "infrastructure": {/*...*/},
-            "cluster_manifests": {
-                "argo-ingress": {
-                    "apiVersion": "networking.k8s.io/v1",
-                    "kind": "Ingress",
-                    "metadata": {/*...*/},
-                    "spec": {
-                        "tls": [{
-                            "hosts": ["$.cndi.prompts.argocdDomainName"],
-                            "secretName": "lets-encrypt-private-key"
-                        }],
-                        "rules": [{
-                            "host": "$.cndi.prompts.argocdDomainName",
-                            "http": {
-                                "paths": [/*...*/]
-                            }
-                        }]
-                    }
+  "cndi-config": {
+    "template": {
+      "applications": {
+        /*...*/
+      },
+      "infrastructure": {
+        /*...*/
+      },
+      "cluster_manifests": {
+        "argo-ingress": {
+          "apiVersion": "networking.k8s.io/v1",
+          "kind": "Ingress",
+          "metadata": {
+            /*...*/
+          },
+          "spec": {
+            "tls": [
+              {
+                "hosts": ["{{ $.cndi.prompts.responses.argocdDomainName }}"],
+                "secretName": "lets-encrypt-private-key"
+              }
+            ],
+            "rules": [
+              {
+                "host": "{{ $.cndi.prompts.responses.argocdDomainName }}",
+                "http": {
+                  "paths": [
+                    /*...*/
+                  ]
                 }
-            }
+              }
+            ]
+          }
         }
+      }
     }
+  }
 }
 ```
 
@@ -74,31 +117,39 @@ Output:
 
 ```jsonc
 {
-    "applications": {/*...*/},
-    "infrastructure": {/*...*/},
-    "cluster_manifests": {
-        "argo-ingress": {
-            "apiVersion": "networking.k8s.io/v1",
-            "kind": "Ingress",
-            "metadata": {/*...*/},
-            "spec": {
-                "tls": [
-                    {
-                        "hosts": ["myargocd.creedthoughts.comgov.uks"],
-                        "secretName": "lets-encrypt-private-key"
-                    }
-                ],
-                "rules": [
-                    {
-                        "host": "myargocd.creedthoughts.comgov.uks",
-                        "http": {
-                            "paths": [/*...*/]
-                        }
-                    }
-                ]
+  "applications": {
+    /*...*/
+  },
+  "infrastructure": {
+    /*...*/
+  },
+  "cluster_manifests": {
+    "argo-ingress": {
+      "apiVersion": "networking.k8s.io/v1",
+      "kind": "Ingress",
+      "metadata": {
+        /*...*/
+      },
+      "spec": {
+        "tls": [
+          {
+            "hosts": ["myargocd.creedthoughts.comgov.uks"],
+            "secretName": "lets-encrypt-private-key"
+          }
+        ],
+        "rules": [
+          {
+            "host": "myargocd.creedthoughts.comgov.uks",
+            "http": {
+              "paths": [
+                /*...*/
+              ]
             }
-        }
+          }
+        ]
+      }
     }
+  }
 }
 ```
 
@@ -110,16 +161,25 @@ The `env` block is used to provide a templating interface around the `.env` file
 
 ```jsonc
 {
-  "env": {
-    "prompts": [/*...*/],
-    "extend_basic_env": "aws"
+  "outputs":{
+    {...},
+    "env": {
+      "extend_basic_env": "aws",
+      "entries": [
+        {
+          "name": "POSTGRES_PORT",
+          "value": "5432"
+        }
+      ]
+    }
   }
 }
 ```
 
-By specifying a list of prompts, we can again expose a list of questions to the user when they run `cndi init --interactive` or fallback to specified defaults otherwise.
 
-The `extend_basic_env` key is used to extend the `.env` file for a given deployment target. CNDI provides the necessary prompts for each deployment target so that the `.env` file can be extended after those basic values are collected. The value of `extend_basic_env` should be the name of the deployment target you wish to extend, for example `gcp`, `azure` or `aws` as shown above.
+The `extend_basic_env` key is used to extend the built-in `.env` file cndi provides for a given deployment target. CNDI provides the necessary prompts for each deployment target so that the `.env` file can be extended after those basic values are collected. The value of `extend_basic_env` should be the name of the deployment target you wish to extend, for example `gcp`, `azure` or `aws` as shown above.
+
+It's also possible to leverage `"prompt"` values here in `outputs["env"]`, let's look at an example:
 
 ### Example
 
@@ -127,34 +187,36 @@ Input:
 
 ```jsonc
 {
-  "extend_basic_env": "aws",
   "prompts": [
     {
-      "type": "Comment",
-      "comment": "airflow-git-credentials secret values for DAG Storage"
+      "name": "secretAppPassword",
+      "type": "Input",
+      "message": "What password should be used for SecretApp?"
     },
-    {
-      "name": "GIT_SYNC_USERNAME",
-      "message": "Please enter your git username for Airflow DAG Storage:",
-      "type": "Secret"
-    },
-    {
-      "name": "GIT_SYNC_PASSWORD",
-      "message": "Please enter your git password for Airflow DAG Storage:",
-      "type": "Secret"
+  ],
+  "outputs": {
+    "env": {
+      "extend_basic_env": "aws",
+      "entries": [
+        {
+          "name": "SECRETAPP_PASSWORD",
+          "value": "{{ $.cndi.prompts.responses.secretAppPassword }}"
+        }
+      ]
     }
-  ]
+  }
 }
+```
+
+```bash
+
 ```
 
 Output:
 
 ```bash
-# airflow-git-credentials secret values for DAG Storage
 
-GIT_SYNC_USERNAME='johnstonmatt'
-
-GIT_SYNC_PASSWORD='hunter2'
+SECRETAPP_PASSWORD='myairflowpassword'
 
 ```
 
@@ -208,18 +270,24 @@ neato!
 
 ```jsonc
 {
-    "cndi-config": {
-        "template": {/*...*/},
-        "prompts": [/*...*/]
+  "cndi-config": {
+    "template": {
+      /*...*/
     },
-    "env": {
-        "prompts": [/*...*/],
-        "extend_basic_env": "aws"
-    },
-    "readme": {
-        "extends_basic_readme": "aws",
-        "template": "##This is a sample readme\n\nneato!"
-    }
+    "prompts": [
+      /*...*/
+    ]
+  },
+  "env": {
+    "prompts": [
+      /*...*/
+    ],
+    "extend_basic_env": "aws"
+  },
+  "readme": {
+    "extends_basic_readme": "aws",
+    "template": "##This is a sample readme\n\nneato!"
+  }
 }
 ```
 
