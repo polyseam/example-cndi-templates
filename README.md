@@ -209,14 +209,16 @@ Input:
 ```
 
 ```bash
-
+cndi init --interactive --template https://raw.githubusercontent.com/polyseam/example-cndi-templates/main/aws/tiny.jsonc
 ```
+
+![secret-app-commands](img/secret-app-example.png)
 
 Output:
 
 ```bash
 
-SECRETAPP_PASSWORD='myairflowpassword'
+SECRETAPP_PASSWORD='top_secret123'
 
 ```
 
