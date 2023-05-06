@@ -31,6 +31,9 @@
         }
       ]
     },
-    "readme": "# logging into secret app\n\nvisit secretapp.cndi.dev and type in the passphrase \"{{ $.cndi.prompts.responses.secretAppPassword }}\""
+    "readme": {
+      "extend_basic_readme": "aws",
+      "template_section": "# logging into secret app\n\nvisit secretapp.cndi.dev and type in the passphrase \"{{ $.cndi.prompts.responses.secretAppPassword }}\""
+    }
   }
 }

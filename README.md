@@ -1,12 +1,31 @@
 # example-cndi-templates
 
+There are a few example templates here to help you get started in building your
+own! The smallest one can be found [here](aws/tiny.jsonc).
+
+```bash
+cndi init --interactive --template https://raw.githubusercontent.com/polyseam/example-cndi-templates/main/aws/tiny.jsonc
+```
+
+![secret-app-commands](img/secret-app-example.png)
+
+---
+
 ## Wbat is a CNDI Template?
 
-A [cndi](https://cndi.run/gh?utm_content=gh_cndi_template_readme&utm_campaign=cndi_template_readme_v1&utm_source=github.com/polyseam/cndi-template-basic&utm_medium=repo&utm_id=1007) Template is a JSON file that CNDI can parse in order to provide a simplified deployment experience for some cloud-native application. The template declares 3 `"output"` blocks, each relating to a particular file, and one `"prompts"` array which allows each output to be customized by end users. Let's start by looking at the `"prompts"` array.
+A
+[cndi](https://cndi.run/gh?utm_content=gh_cndi_template_readme&utm_campaign=cndi_template_readme_v1&utm_source=github.com/polyseam/cndi-template-basic&utm_medium=repo&utm_id=1007)
+Template is a JSON file that CNDI can parse in order to provide a simplified
+deployment experience for some cloud-native application. The template declares 3
+`"output"` blocks, each relating to a particular file, and one `"prompts"` array
+which allows each output to be customized by end users. Let's start by looking
+at the `"prompts"` array.
 
 ## prompts
 
-The `prompts` array is a list of questions that CNDI will ask the user when they run `cndi init --interactive`, if the user is not in interactive mode the value will fallback to the default provided.
+The `prompts` array is a list of questions that CNDI will ask the user when they
+run `cndi init --interactive`, if the user is not in interactive mode the value
+will fallback to the default provided.
 
 ```jsonc
 {
@@ -31,21 +50,28 @@ The `prompts` array is a list of questions that CNDI will ask the user when they
 }
 ```
 
-When using the `--interactive` flag in CNDI each of these prompts will provide an interactive prompt to populate the value. 
+When using the `--interactive` flag in CNDI each of these prompts will provide
+an interactive prompt to populate the value.
 
-If the user does not provide a value _or_ if the user is not using interactive mode, the default will be used. 
+If the user does not provide a value _or_ if the user is not using interactive
+mode, the default will be used.
 
-These values are then accessible inside of a template `"output"` using the following syntax: `{{ $.cndi.prompts.responses.<prompt_name> }}`. 
+These values are then accessible inside of a template `"output"` using the
+following syntax: `{{ $.cndi.prompts.responses.<prompt_name> }}`.
 
-For example, if we wanted to use the value of `argocdDomainName` in a template we would use the following syntax: `{{ $.cndi.prompts.responses.argocdDomainName }}`.
+For example, if we wanted to use the value of `argocdDomainName` in a template
+we would use the following syntax:
+`{{ $.cndi.prompts.responses.argocdDomainName }}`.
 
 ## outputs
 
-## cndi-config
+### cndi-config
 
-### Summary
+**Summary**
 
-The `outputs["cndi-config"]` block is used to provide a templating interface around the `cndi-config.jsonc` file that acts as the core of each CNDI project. The shape of the object is as follows:
+The `outputs["cndi-config"]` block is used to provide a templating interface
+around the `cndi-config.jsonc` file that acts as the core of each CNDI project.
+The shape of the object is as follows:
 
 ```jsonc
 {
@@ -65,9 +91,10 @@ The `outputs["cndi-config"]` block is used to provide a templating interface aro
 }
 ```
 
-Let's look at an example of leveraging a `"prompt"` entry to populate a value into the `cndi-config.jsonc` file.
+Let's look at an example of leveraging a `"prompt"` entry to populate a value
+into the `cndi-config.jsonc` file.
 
-### Example
+**Example**
 
 Input:
 
@@ -153,11 +180,13 @@ Output:
 }
 ```
 
-## env
+### env
 
-### Summary
+**Summary**
 
-The `env` block is used to provide a templating interface around the `.env` file which is used for values which should not be written directly to version control. The shape of the object is as follows:
+The `env` block is used to provide a templating interface around the `.env` file
+which is used for values which should not be written directly to version
+control. The shape of the object is as follows:
 
 ```jsonc
 {
@@ -176,12 +205,17 @@ The `env` block is used to provide a templating interface around the `.env` file
 }
 ```
 
+The `extend_basic_env` key is used to extend the built-in `.env` file cndi
+provides for a given deployment target. CNDI provides the necessary prompts for
+each deployment target so that the `.env` file can be extended after those basic
+values are collected. The value of `extend_basic_env` should be the name of the
+deployment target you wish to extend, for example `gcp`, `azure` or `aws` as
+shown above.
 
-The `extend_basic_env` key is used to extend the built-in `.env` file cndi provides for a given deployment target. CNDI provides the necessary prompts for each deployment target so that the `.env` file can be extended after those basic values are collected. The value of `extend_basic_env` should be the name of the deployment target you wish to extend, for example `gcp`, `azure` or `aws` as shown above.
+It's also possible to leverage `"prompt"` values here in `outputs["env"]`, let's
+look at an example:
 
-It's also possible to leverage `"prompt"` values here in `outputs["env"]`, let's look at an example:
-
-### Example
+**Example**
 
 Input:
 
@@ -192,7 +226,7 @@ Input:
       "name": "secretAppPassword",
       "type": "Input",
       "message": "What password should be used for SecretApp?"
-    },
+    }
   ],
   "outputs": {
     "env": {
@@ -208,47 +242,58 @@ Input:
 }
 ```
 
-```bash
-cndi init --interactive --template https://raw.githubusercontent.com/polyseam/example-cndi-templates/main/aws/tiny.jsonc
-```
-
-![secret-app-commands](img/secret-app-example.png)
-
 Output:
 
 ```bash
-
 SECRETAPP_PASSWORD='top_secret123'
-
 ```
 
-## readme
+### readme
 
-### Summary
+**Summary**
 
-The final block of a [cndi](https://github.com/polyseam/cndi) template is the `readme` block, which behave similarly to the other two sections. We specify a readme block in order to provide a templating interface around the `README.md` file that is generated when a user runs `cndi init`. The shape of the object is as follows:
+The final block of a [cndi](https://github.com/polyseam/cndi) template is the
+`readme` block, which behave similarly to the other two sections. We specify a
+readme block in order to provide a templating interface around the `README.md`
+file that is generated when a user runs `cndi init`. The shape of the object is
+as follows:
 
 ```jsonc
 {
-  "readme": {
-    "extends_basic_readme": "aws",
-    "template": "## This is a sample readme section"
+  "outputs": {
+    "cndi-config":{...},
+    "env":{...},
+    "readme": {
+      "extends_basic_readme": "aws",
+      "template_section": "## This is a sample readme section dedicated to this template"
+    }
   }
 }
 ```
 
-The `extends_basic_readme` key is used to extend the `README.md` file for a given deployment target. CNDI provides the necessary readme section for each deployment target so that the `README.md` file can be extended with more content after those basic readme sections have been written to the file.
+The `extends_basic_readme` key is used to extend the `README.md` file for a
+given deployment target. CNDI provides the necessary readme section for each
+deployment target so that the `README.md` file can be extended with more content
+after those basic readme sections have been written to the file.
 
-The value of `extends_basic_readme` should be the name of the deployment target you wish to extend, for example `gcp`, `azure` or `aws` as shown above.
+The value of `extends_basic_readme` should be the name of the deployment target
+you wish to extend, for example `gcp`, `azure` or `aws` as shown above.
 
-### Example
+**Example**
 
 Input:
 
 ```jsonc
 {
-  "extends_basic_readme": "aws",
-  "template": "## This is a simple readme section that is template specific\n\nneato!"
+  "prompts":[{...}],
+  "outputs":{
+    "cndi-config":{...},
+    "env":{...},
+    "readme": {
+      "extend_basic_readme": "aws",
+      "template_section": "# logging into secret app\n\nvisit secretapp.cndi.dev and type in the passphrase \"{{ $.cndi.prompts.responses.secretAppPassword }}\""
+    }
+  }
 }
 ```
 
@@ -259,40 +304,45 @@ Output:
 
 ## aws
 
-This cluster will be deployed on [Amazon Web Services](https://aws.com).
-When your cluster is initialized the next step is to go to your domain registrar and create an CNAME record for your Airflow instance, and another for ArgoCD.
-Both entries should point to the single load balancer that was created for your cluster.
+This cluster will be deployed on [Amazon Web Services](https://aws.com). When
+your cluster is initialized the next step is to go to your domain registrar and
+create an CNAME record for your Airflow instance, and another for ArgoCD. Both
+entries should point to the single load balancer that was created for your
+cluster.
 
 ## This is a simple readme section that is template specific
 
 neato!
 ```
 
-## all together now!
+### all together now!
 
 ```jsonc
 {
-  "cndi-config": {
-    "template": {
-      /*...*/
+  "prompts": [
+    {...}
+  ],
+  "outputs":{
+    "cndi-config": {
+      "infrastructure":{...},
+      "cluster_manifests":{...},
+      "applications":{...}
     },
-    "prompts": [
-      /*...*/
-    ]
-  },
-  "env": {
-    "prompts": [
-      /*...*/
-    ],
-    "extend_basic_env": "aws"
-  },
-  "readme": {
-    "extends_basic_readme": "aws",
-    "template": "##This is a sample readme\n\nneato!"
+    "env": {
+      "extend_basic_env": "aws",
+      "entries": [{...}]
+    },
+    "readme": {
+      "extends_basic_readme": "aws",
+      "template_section": "##This is a sample readme\n\nneato!"
+    }
   }
 }
 ```
 
 ## Included Examples
 
-This repository contains example templates for use within [cndi](https://github.com/polyseam/cndi). There is at least one unit test within the CNDI project that verifies remote templates are working correctly by installing a template from this repository.
+This repository contains example templates for use within
+[cndi](https://github.com/polyseam/cndi). There is at least one unit test within
+the CNDI project that verifies remote templates are working correctly by
+installing a template from this repository.
