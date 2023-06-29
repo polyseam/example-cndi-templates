@@ -101,38 +101,36 @@ Input:
 ```jsonc
 {
   "cndi-config": {
-    "template": {
-      "applications": {
-        /*...*/
-      },
-      "infrastructure": {
-        /*...*/
-      },
-      "cluster_manifests": {
-        "argo-ingress": {
-          "apiVersion": "networking.k8s.io/v1",
-          "kind": "Ingress",
-          "metadata": {
-            /*...*/
-          },
-          "spec": {
-            "tls": [
-              {
-                "hosts": ["{{ $.cndi.prompts.responses.argocdDomainName }}"],
-                "secretName": "lets-encrypt-private-key"
+    "applications": {
+      /*...*/
+    },
+    "infrastructure": {
+      /*...*/
+    },
+    "cluster_manifests": {
+      "argo-ingress": {
+        "apiVersion": "networking.k8s.io/v1",
+        "kind": "Ingress",
+        "metadata": {
+          /*...*/
+        },
+        "spec": {
+          "tls": [
+            {
+              "hosts": ["{{ $.cndi.prompts.responses.argocdDomainName }}"],
+              "secretName": "lets-encrypt-private-key"
+            }
+          ],
+          "rules": [
+            {
+              "host": "{{ $.cndi.prompts.responses.argocdDomainName }}",
+              "http": {
+                "paths": [
+                  /*...*/
+                ]
               }
-            ],
-            "rules": [
-              {
-                "host": "{{ $.cndi.prompts.responses.argocdDomainName }}",
-                "http": {
-                  "paths": [
-                    /*...*/
-                  ]
-                }
-              }
-            ]
-          }
+            }
+          ]
         }
       }
     }
